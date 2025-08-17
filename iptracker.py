@@ -5,9 +5,11 @@ import sys
 
 
 hosts = [
-"192.168.2.1",
-"192.168.2.10",
-"192.168.2.12"
+"192.168.68.1", #router
+"192.168.68.10",
+"192.168.68.12",
+"8.8.8.8", #google's DNS
+"1.1.1.1" #cloud flare's DNS
 ]
 
 hostArray = {host: 1 for host in hosts}
@@ -31,12 +33,19 @@ for arg in sys.argv[1:]:
         print("    -o prints length of the outage every time a host comes back to life")
         sys.exit(1)
 
+timeStampPrintDelay = 0
+
 while True:
     result = subprocess.run(["/usr/bin/fping", '-r', '0'] + hosts, capture_output=True, text=True)
     output = result.stdout.splitlines()
 
     date = datetime.now().strftime('%Y%m%d-%H%M%S')
-    print(f"---------------[{date}]-----------------")
+
+    if timeStampPrintDelay == 0:
+        print(f"---------------[{date}]-----------------")
+        timeStampPrintDelay = 10
+    else:
+        timeStampPrintDelay = timeStampPrintDelay - 1
 
     for line in output:
         host = line.split()[0]
