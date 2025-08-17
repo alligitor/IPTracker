@@ -1,0 +1,26 @@
+#this script should be copied to
+# /lib/systemd/system/
+#also, create a link to it in:
+#etc/systemd/system/multi-user.target.wants/
+#do the following:
+#cd etc/systemd/system/multi-user.target.wants/
+#sudo ln -s /lib/systemd/system/iptracker.service iptracker.service
+
+
+[Unit]
+Description=IPTracker Service
+After=network.target
+
+[Service]
+# Name of the screen session
+#ExecStart=/usr/bin/screen -S mysession -d -m /path/to/your/command
+Type=forking
+ExecStart=/home/pi/Alligitor/IPTracker/iptracker-service.sh
+WorkingDirectory=/home/pi/Alligitor/IPTracker
+User=pi
+Group=pi
+Restart=always
+Environment=PATH=/usr/local/bin:/usr/bin:/bin
+
+[Install]
+WantedBy=multi-user.target
